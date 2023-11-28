@@ -67,10 +67,10 @@ jobs:
 
       - name: Replace Placeholders in appsettings.json
         run: |
-          sed -i "s|{SQL_DATABASE}|${SQL_DATABASE}|g" ./PatientAPI/appsettings.json
-          sed -i "s|{SQL_SERVER}|${SQL_SERVER}|g" ./PatientAPI/appsettings.json
-          sed -i "s|{SQL_USER}|${SQL_USER}|g" ./PatientAPI/appsettings.json
-          sed -i "s|{SQL_PASSWORD}|${SQL_PASSWORD}|g" ./PatientAPI/appsettings.json
+          sed -i "s|{SQL_DATABASE}|${SQL_DATABASE}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{SQL_SERVER}|${SQL_SERVER}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{SQL_USER}|${SQL_USER}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{SQL_PASSWORD}|${SQL_PASSWORD}|g" ./ReportCommandAPI/appsettings.json
         
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
