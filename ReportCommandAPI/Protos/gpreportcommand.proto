@@ -49,8 +49,7 @@ message UpdateGPReportRequest {
   string id = 1;
   string patient_id = 2;
   string employee_id = 3;
-  google.protobuf.Timestamp initial_creation = 4;
-  string notes = 5;
+  string notes = 4;
 }
 
 message UpdateGPReportResponse {
