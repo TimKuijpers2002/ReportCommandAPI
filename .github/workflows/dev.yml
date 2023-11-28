@@ -18,10 +18,10 @@ jobs:
           dotnet-version: '7.0.x'
 
       - name: Restore
-        run: dotnet restore ./PatientAPI.sln
+        run: dotnet restore ./ReportCommandAPI.sln
 
       - name: Build
-        run: dotnet build ./PatientAPI.sln --configuration Release --no-restore
+        run: dotnet build ./ReportCommandAPI.sln --configuration Release --no-restore
 
   analyse:
     runs-on: ubuntu-latest
@@ -77,4 +77,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/patientapi:dev
+          tags: ${{ secrets.DOCKER_USERNAME }}/reportcommandapi:dev
