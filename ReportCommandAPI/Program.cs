@@ -11,13 +11,13 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 // Cassandra configuration
 var cassandraSettings = builder.Configuration.GetSection("CassandraSettings");
 var contactPoint = cassandraSettings["ContactPoint"];
-var port = int.Parse(cassandraSettings["Port"]);
+var port = cassandraSettings["Port"];
 var keyspace = cassandraSettings["Keyspace"];
 
 // Cassandra setup
 var cluster = Cluster.Builder()
     .AddContactPoint(contactPoint)
-    .WithPort(port)
+    .WithPort(int.Parse(port))
     .Build();
 var session = cluster.Connect(keyspace);
 
