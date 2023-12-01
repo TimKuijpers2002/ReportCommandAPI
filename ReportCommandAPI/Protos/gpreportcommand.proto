@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+option csharp_namespace = "ReportCommandAPI";
+
+import "google/api/annotations.proto";
+
+package gpreportcommand;
+
+// The greeting service definition.
+service GPReportCommandProto {
+
+  // Create
+  rpc CreateGPReport(CreateGPReportRequest) returns (CreateGPReportResponse) {
+    option (google.api.http) = {
+      post: "/v1/gpreport"
+      body: "*"
+    };
+  };
+
+  // Update
+  rpc UpdateGPReport(UpdateGPReportRequest) returns (UpdateGPReportResponse) {
+    option (google.api.http) = {
+      put: "/v1/gpreport/{id}"
+      body: "*"
+    };
+  };
+
+  // Delete
+  rpc DeleteGPReport(DeleteGPReportRequest) returns (DeleteGPReportResponse) {
+    option (google.api.http) = {
+      delete: "/v1/gpreport/{id}"
+    };
+  };
+
+}
+
+message CreateGPReportRequest {
+  string patient_id = 1;
+  string employee_id = 2;
+  string notes = 3;
+}
+
+message CreateGPReportResponse {
+  string id = 1;
+}
+
+message UpdateGPReportRequest {
+  string id = 1;
+  string patient_id = 2;
+  string employee_id = 3;
+  string notes = 4;
+}
+
+message UpdateGPReportResponse {
+  string id = 1;
+}
+
+message DeleteGPReportRequest {
+  string id = 1;
+}
+
+message DeleteGPReportResponse {
+  string id = 1;
+}

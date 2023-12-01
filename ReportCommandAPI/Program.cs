@@ -1,17 +1,34 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Cassandra;
 using ReportCommandAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Additional configuration is required to successfully run gRPC on macOS.
-// For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
+// Configuration
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-// Add services to the container.
-builder.Services.AddGrpc();
+// Cassandra configuration
+var cassandraSettings = builder.Configuration.GetSection("CassandraSettings");
+var contactPoint = cassandraSettings["ContactPoint"];
+var port = int.Parse(cassandraSettings["Port"]);
+var keyspace = cassandraSettings["Keyspace"];
+
+// Cassandra setup
+var cluster = Cluster.Builder()
+    .AddContactPoint(contactPoint)
+    .WithPort(port)
+    .Build();
+var session = cluster.Connect(keyspace);
+
+// Register Cassandra Session as a Singleton
+builder.Services.AddSingleton(session);
+
+// Additional configurations...
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+app.MapGrpcService<GPReportCommandService>();
+app.MapGet("/", () => "health check");
 
 app.Run();
