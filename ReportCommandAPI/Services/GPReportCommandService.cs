@@ -1,3 +1,4 @@
+using Cassandra;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,11 @@ namespace ReportCommandAPI.Services
 {
     public class GPReportCommandService : GPReportCommandProto.GPReportCommandProtoBase
     {
-        private readonly ReportCommandDbContext _dbContext;
-        public GPReportCommandService(ReportCommandDbContext dbContext)
+        private readonly Cassandra.ISession _cassandraSession;
+
+        public GPReportCommandService(Cassandra.ISession cassandraSession)
         {
-            _dbContext = dbContext;
+            _cassandraSession = cassandraSession;
         }
 
         public override async Task<CreateGPReportResponse> CreateGPReport(CreateGPReportRequest request, ServerCallContext context)
@@ -24,13 +26,19 @@ namespace ReportCommandAPI.Services
 
             var gpreport = new GPReportDTO
             {
+                Id = Guid.NewGuid(),
                 PatientId = Guid.Parse(request.PatientId),
                 EmployeeId = Guid.Parse(request.EmployeeId),
                 Notes = request.Notes,
             };
 
-            await _dbContext.AddAsync(gpreport);
-            await _dbContext.SaveChangesAsync();
+            // Prepare the statement
+            var statement = new SimpleStatement(
+                "INSERT INTO gpreport (Id, PatientId, EmployeeId, Notes) VALUES (?, ?, ?, ?)",
+                gpreport.Id, gpreport.PatientId, gpreport.EmployeeId, gpreport.Notes);
+
+            // Execute the statement
+            await _cassandraSession.ExecuteAsync(statement);
 
             return await Task.FromResult(new CreateGPReportResponse
             {
@@ -44,23 +52,20 @@ namespace ReportCommandAPI.Services
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "You must provide a valid input"));
             }
-            var gpreport = await _dbContext.GPReports.FirstOrDefaultAsync(r => r.Id.ToString() == request.Id);
 
-            if (gpreport == null)
-            {
-                throw new RpcException(new Status(StatusCode.NotFound, $"No gpreport with id {request.Id}"));
-            }
+            var gpreportId = Guid.Parse(request.Id);
 
-            gpreport.Id = Guid.Parse(request.Id);
-            gpreport.PatientId = Guid.Parse(request.PatientId);
-            gpreport.EmployeeId = Guid.Parse(request.EmployeeId);
-            gpreport.Notes = request.Notes;
+            // Prepare the statement to update the existing report
+            var updateStatement = new SimpleStatement(
+                "UPDATE gpreport SET PatientId = ?, EmployeeId = ?, Notes = ? WHERE Id = ?",
+                Guid.Parse(request.PatientId), Guid.Parse(request.EmployeeId), request.Notes, gpreportId);
 
-            await _dbContext.SaveChangesAsync();
+            // Execute the update statement
+            await _cassandraSession.ExecuteAsync(updateStatement);
 
             return await Task.FromResult(new UpdateGPReportResponse
             {
-                Id = gpreport.Id.ToString()
+                Id = gpreportId.ToString()
             });
         }
 
@@ -70,19 +75,18 @@ namespace ReportCommandAPI.Services
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "You must provide a valid input"));
             }
-            var gpreport = await _dbContext.GPReports.FirstOrDefaultAsync(r => r.Id.ToString() == request.Id);
 
-            if (gpreport == null)
-            {
-                throw new RpcException(new Status(StatusCode.NotFound, $"No gpreport with id {request.Id}"));
-            }
+            var gpreportId = Guid.Parse(request.Id);
 
-            _dbContext.GPReports.Remove(gpreport);
-            await _dbContext.SaveChangesAsync();
+            // Prepare the statement to delete the existing report
+            var deleteStatement = new SimpleStatement("DELETE FROM gpreport WHERE Id = ?", gpreportId);
+
+            // Execute the delete statement
+            await _cassandraSession.ExecuteAsync(deleteStatement);
 
             return await Task.FromResult(new DeleteGPReportResponse
             {
-                Id = gpreport.Id.ToString()
+                Id = gpreportId.ToString()
             });
         }
     }
