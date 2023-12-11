@@ -61,14 +61,16 @@ jobs:
       - name: Set Environment Variables
         run: |
           echo "CASSANDRA_KEYSPACE=${{ secrets.CASSANDRA_KEYSPACE }}" >> $GITHUB_ENV
-          echo "CASSANDRA_PORT=${{ secrets.CASSANDRA_PORT }}" >> $GITHUB_ENV
-          echo "CASSANDRA_CONTACTPOINT=${{ secrets.CASSANDRA_CONTACTPOINT }}" >> $GITHUB_ENV
+          echo "CASSANDRA_CLIENTID=${{ secrets.CASSANDRA_CLIENTID }}" >> $GITHUB_ENV
+          echo "CASSANDRA_CLIENTSECRET=${{ secrets.CASSANDRA_CLIENTSECRET }}" >> $GITHUB_ENV
+          echo "CASSANDRA_BUNDLEPATH=${{ secrets.CASSANDRA_BUNDLEPATH }}" >> $GITHUB_ENV
 
       - name: Replace Placeholders in appsettings.json
         run: |
           sed -i "s|{CASSANDRA_KEYSPACE}|${CASSANDRA_KEYSPACE}|g" ./ReportCommandAPI/appsettings.json
-          sed -i "s|{CASSANDRA_PORT}|${CASSANDRA_PORT}|g" ./ReportCommandAPI/appsettings.json
-          sed -i "s|{CASSANDRA_CONTACTPOINT}|${CASSANDRA_CONTACTPOINT}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{CASSANDRA_CLIENTID}|${CASSANDRA_CLIENTID}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{CASSANDRA_CLIENTSECRET}|${CASSANDRA_CLIENTSECRET}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{CASSANDRA_BUNDLEPATH}|${CASSANDRA_BUNDLEPATH}|g" ./ReportCommandAPI/appsettings.json
         
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
