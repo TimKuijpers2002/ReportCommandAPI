@@ -3,7 +3,6 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using ReportCommandAPI;
-using ReportCommandAPI.Data;
 using ReportCommandAPI.Models;
 
 namespace ReportCommandAPI.Services
