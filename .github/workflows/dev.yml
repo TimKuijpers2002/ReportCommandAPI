@@ -63,12 +63,14 @@ jobs:
           echo "CASSANDRA_KEYSPACE=${{ secrets.CASSANDRA_KEYSPACE }}" >> $GITHUB_ENV
           echo "CASSANDRA_CLIENTID=${{ secrets.CASSANDRA_CLIENTID }}" >> $GITHUB_ENV
           echo "CASSANDRA_CLIENTSECRET=${{ secrets.CASSANDRA_CLIENTSECRET }}" >> $GITHUB_ENV
+          echo "CASSANDRA_BUNDLE_FILE=${{ secrets.CASSANDRA_BUNDLE_FILE }}" >> $GITHUB_ENV
 
       - name: Replace Placeholders in appsettings.json
         run: |
           sed -i "s|{CASSANDRA_KEYSPACE}|${CASSANDRA_KEYSPACE}|g" ./ReportCommandAPI/appsettings.json
           sed -i "s|{CASSANDRA_CLIENTID}|${CASSANDRA_CLIENTID}|g" ./ReportCommandAPI/appsettings.json
           sed -i "s|{CASSANDRA_CLIENTSECRET}|${CASSANDRA_CLIENTSECRET}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{CASSANDRA_BUNDLE_FILE}|${CASSANDRA_BUNDLE_FILE}|g" ./ReportCommandAPI/appsettings.json
         
       - name: Download Database Bundle from Azure Storage
         run: |
