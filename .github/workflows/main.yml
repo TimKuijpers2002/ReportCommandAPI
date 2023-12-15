@@ -1,4 +1,4 @@
-name: CI/CD - Prod
+name: CI/CD - Production
 
 on:
   push:
@@ -61,15 +61,28 @@ jobs:
       - name: Set Environment Variables
         run: |
           echo "CASSANDRA_KEYSPACE=${{ secrets.CASSANDRA_KEYSPACE }}" >> $GITHUB_ENV
-          echo "CASSANDRA_PORT=${{ secrets.CASSANDRA_PORT }}" >> $GITHUB_ENV
-          echo "CASSANDRA_CONTACTPOINT=${{ secrets.CASSANDRA_CONTACTPOINT }}" >> $GITHUB_ENV
+          echo "CASSANDRA_CLIENTID=${{ secrets.CASSANDRA_CLIENTID }}" >> $GITHUB_ENV
+          echo "CASSANDRA_CLIENTSECRET=${{ secrets.CASSANDRA_CLIENTSECRET }}" >> $GITHUB_ENV
+          echo "CASSANDRA_BUNDLE_FILE=${{ secrets.CASSANDRA_BUNDLE_FILE }}" >> $GITHUB_ENV
 
       - name: Replace Placeholders in appsettings.json
         run: |
           sed -i "s|{CASSANDRA_KEYSPACE}|${CASSANDRA_KEYSPACE}|g" ./ReportCommandAPI/appsettings.json
-          sed -i "s|{CASSANDRA_PORT}|${CASSANDRA_PORT}|g" ./ReportCommandAPI/appsettings.json
-          sed -i "s|{CASSANDRA_CONTACTPOINT}|${CASSANDRA_CONTACTPOINT}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{CASSANDRA_CLIENTID}|${CASSANDRA_CLIENTID}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{CASSANDRA_CLIENTSECRET}|${CASSANDRA_CLIENTSECRET}|g" ./ReportCommandAPI/appsettings.json
+          sed -i "s|{CASSANDRA_BUNDLE_FILE}|${CASSANDRA_BUNDLE_FILE}|g" ./ReportCommandAPI/appsettings.json
         
+      - name: Download Database Bundle from Azure Storage
+        run: |
+          az storage blob download \
+            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
+            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER }} \
+            --name secure-connect-reportcommanddb.zip \
+            --type block \
+            --account-key "${{ secrets.AZURE_STORAGE_SECRET }}" \
+            --destination ~/downloaded-files
+
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
