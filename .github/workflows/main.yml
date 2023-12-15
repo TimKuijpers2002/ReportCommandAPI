@@ -74,7 +74,7 @@ jobs:
         
       - name: Download Database Bundle from Azure Storage
         run: |
-          az storage blob download -c ${{ secrets.AZURE_STORAGE_CONTAINER }} -n secure-connect-reportcommanddb --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_SECRET }} -f ~/downloaded-files
+          az storage blob download -c ${{ secrets.AZURE_STORAGE_CONTAINER }} -n secure-connect-reportcommanddb.zip --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_SECRET }} -f ~/downloaded-files
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
