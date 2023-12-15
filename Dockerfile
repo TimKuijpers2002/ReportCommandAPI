@@ -19,7 +19,6 @@ RUN dotnet publish "ReportCommandAPI.csproj" -c Release -o /app/publish /p:UseAp
 # Combine stages and copy the secure connection bundle into the container
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
 WORKDIR /app
-ARG DATABASE_BUNDLE_PATH
 COPY --from=publish /app/publish .
 COPY secure-connect-reportcommanddb.zip /app/
 
