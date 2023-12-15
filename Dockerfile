@@ -5,6 +5,9 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+# Copy the secure connection bundle into the container
+COPY downloaded-files/secure-connect-reportcommanddb.zip /app/
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["ReportCommandAPI/ReportCommandAPI.csproj", "ReportCommandAPI/"]
