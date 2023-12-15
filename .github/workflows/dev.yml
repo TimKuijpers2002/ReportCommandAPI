@@ -63,15 +63,24 @@ jobs:
           echo "CASSANDRA_KEYSPACE=${{ secrets.CASSANDRA_KEYSPACE }}" >> $GITHUB_ENV
           echo "CASSANDRA_CLIENTID=${{ secrets.CASSANDRA_CLIENTID }}" >> $GITHUB_ENV
           echo "CASSANDRA_CLIENTSECRET=${{ secrets.CASSANDRA_CLIENTSECRET }}" >> $GITHUB_ENV
-          echo "CASSANDRA_BUNDLEPATH=${{ secrets.CASSANDRA_BUNDLEPATH }}" >> $GITHUB_ENV
 
       - name: Replace Placeholders in appsettings.json
         run: |
           sed -i "s|{CASSANDRA_KEYSPACE}|${CASSANDRA_KEYSPACE}|g" ./ReportCommandAPI/appsettings.json
           sed -i "s|{CASSANDRA_CLIENTID}|${CASSANDRA_CLIENTID}|g" ./ReportCommandAPI/appsettings.json
           sed -i "s|{CASSANDRA_CLIENTSECRET}|${CASSANDRA_CLIENTSECRET}|g" ./ReportCommandAPI/appsettings.json
-          sed -i "s|{CASSANDRA_BUNDLEPATH}|${CASSANDRA_BUNDLEPATH}|g" ./ReportCommandAPI/appsettings.json
         
+      - name: Download Database Bundle from Azure Storage
+        run: |
+          az storage blob download \
+            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
+            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER }} \
+            --name secure-connect-reportcommanddb.zip \
+            --type block \
+            --account-key "${{ secrets.AZURE_STORAGE_SECRET }}" \
+            --destination ~/downloaded-files
+
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
