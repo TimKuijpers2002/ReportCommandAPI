@@ -74,10 +74,7 @@ jobs:
         
       - name: Download Database Bundle from Azure Storage
         run: |
-          az storage blob download -c ${{ secrets.AZURE_STORAGE_CONTAINER }} -n secure-connect-reportcommanddb.zip --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_SECRET }} -f /app/downloaded-files
-
-      - name: Copy Downloaded Files to Build Context
-        run: cp -r /app/downloaded-files .
+          az storage blob download -c ${{ secrets.AZURE_STORAGE_CONTAINER }} -n secure-connect-reportcommanddb.zip --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_SECRET }}
   
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
@@ -85,10 +82,6 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/reportcommandapi:dev
-          build-args: |
-            DATABASE_BUNDLE_PATH=/downloaded-files/secure-connect-reportcommanddb.zip
-        env:
-          DOCKER_BUILDKIT: 1
 
   scan_docker_image:
     runs-on: ubuntu-latest
