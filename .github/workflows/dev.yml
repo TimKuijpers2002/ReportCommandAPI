@@ -23,19 +23,6 @@ jobs:
       - name: Build
         run: dotnet build ./ReportCommandAPI.sln --configuration Release --no-restore
 
-      - name: Install Azure CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-          curl -sL https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-          sudo add-apt-repository -y https://packages.microsoft.com/ubuntu/$(lsb_release -rs | tr -d '.')/prod
-          sudo apt-get update
-          sudo apt-get install -y azure-cli
-        env:
-          AZURE_STORAGE_CONTAINER: ${{ secrets.AZURE_STORAGE_CONTAINER }}
-          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          AZURE_STORAGE_SECRET: ${{ secrets.AZURE_STORAGE_SECRET }}
-
   analyse:
     runs-on: ubuntu-latest
     needs: build
