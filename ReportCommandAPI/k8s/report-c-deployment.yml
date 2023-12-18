@@ -1,0 +1,27 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: report-command-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: report-command-api
+  template:
+    metadata:
+      labels:
+        app: report-command-api
+    spec:
+      containers:
+        - name: report-command-api
+          image: timsku2002/reportcommandapi:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi

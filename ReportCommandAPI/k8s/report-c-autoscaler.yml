@@ -1,0 +1,16 @@
+﻿apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: report-command-api
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: report-command-api
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+status:
+  currentCPUUtilizationPercentage: 0
+  currentReplicas: 1
+  desiredReplicas: 1
