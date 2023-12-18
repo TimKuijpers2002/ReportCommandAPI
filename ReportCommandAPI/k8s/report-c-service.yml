@@ -1,0 +1,11 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: report-command-api-service
+spec:
+  selector:
+    app: report-command-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
