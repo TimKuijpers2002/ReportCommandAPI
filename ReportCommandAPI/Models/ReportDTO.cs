@@ -11,7 +11,7 @@ namespace ReportCommandAPI.Models
         public Guid Id { get; set; }
         public Guid PatientId { get; set; }
         public Guid EmployeeId { get; set; }
-        public DateTime InitialCreation { get; } = DateTime.Now;
+        public DateTime InitialCreation { get; set; }
 
         public ReportDTO(Guid id, Guid patientId, Guid employeeId) 
         {
