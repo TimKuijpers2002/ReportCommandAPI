@@ -101,6 +101,5 @@ jobs:
           image: ${{ secrets.DOCKER_USERNAME }}/reportcommandapi:latest
           args: --file=Dockerfile --severity-threshold=medium
           sarif: false
-          command: monitor
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
