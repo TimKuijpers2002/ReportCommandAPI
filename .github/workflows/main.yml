@@ -99,11 +99,8 @@ jobs:
         continue-on-error: true
         with:
           image: ${{ secrets.DOCKER_USERNAME }}/reportcommandapi:latest
-          args: --file=Dockerfile --severity-threshold=medium --sarif-file-output=snyk.sarif
+          args: --file=Dockerfile --severity-threshold=medium
+          sarif: false
+          command: monitor
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Upload Snyk report as sarif 📦
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: snyk.sarif
