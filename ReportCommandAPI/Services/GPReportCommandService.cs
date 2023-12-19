@@ -24,12 +24,12 @@ namespace ReportCommandAPI.Services
             }
 
             var gpreport = new GPReportDTO
-            {
-                Id = Guid.NewGuid(),
-                PatientId = Guid.Parse(request.PatientId),
-                EmployeeId = Guid.Parse(request.EmployeeId),
-                Notes = request.Notes,
-            };
+            (
+                Guid.NewGuid(),
+                Guid.Parse(request.PatientId),
+                Guid.Parse(request.EmployeeId),
+                request.Notes
+            );
 
             // Prepare the statement
             var statement = new SimpleStatement(

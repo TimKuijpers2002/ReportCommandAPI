@@ -15,6 +15,7 @@ namespace ReportCommandAPI.Models
             PatientId = patientId;
             EmployeeId = employeeId;
             Notes = notes;
+            InitialCreation = DateTime.Now;
         }
 
         public GPReportDTO()
