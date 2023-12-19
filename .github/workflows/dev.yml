@@ -88,10 +88,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/reportcommandapi:dev
 
   scan_docker_image:
-    permissions:
-      id-token: read
-      contents: read
-      packages: read
     runs-on: ubuntu-latest
     needs: [ publish ]
     steps:
@@ -108,5 +104,6 @@ jobs:
         with:
           image: ${{ secrets.DOCKER_USERNAME }}/reportcommandapi:dev
           args: --file=Dockerfile --severity-threshold=medium
+          sarif: false
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
