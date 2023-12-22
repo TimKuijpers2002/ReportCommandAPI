@@ -33,8 +33,8 @@ namespace ReportCommandAPI.Services
 
             // Prepare the statement
             var statement = new SimpleStatement(
-                "INSERT INTO gpreport (Id, PatientId, EmployeeId, Notes) VALUES (?, ?, ?, ?)",
-                gpreport.Id, gpreport.PatientId, gpreport.EmployeeId, gpreport.Notes);
+                "INSERT INTO gpreport (Id, PatientId, EmployeeId, InitialCreation Notes) VALUES (?, ?, ?, ?, ?)",
+                gpreport.Id, gpreport.PatientId, gpreport.EmployeeId, gpreport.InitialCreation.ToUniversalTime().ToTimestamp(), gpreport.Notes);
 
             // Execute the statement
             await _cassandraSession.ExecuteAsync(statement);
