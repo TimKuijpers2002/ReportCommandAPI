@@ -1,9 +1,13 @@
+using Azure.Messaging.EventHubs;
+using Azure.Messaging.EventHubs.Producer;
 using Cassandra;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ReportCommandAPI;
 using ReportCommandAPI.Models;
+using System.Text;
 
 namespace ReportCommandAPI.Services
 {
@@ -38,6 +42,8 @@ namespace ReportCommandAPI.Services
 
             // Execute the statement
             await _cassandraSession.ExecuteAsync(statement);
+
+            SendEventToEventHubAsync(gpreport).Wait();
 
             return await Task.FromResult(new CreateGPReportResponse
             {
@@ -87,6 +93,24 @@ namespace ReportCommandAPI.Services
             {
                 Id = gpreportId.ToString()
             });
+        }
+
+        private async Task SendEventToEventHubAsync(object reportData)
+        {
+            var connectionString = "Endpoint=sb://eventhubcastosql.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=/xqGM/UoYUKcl7vzbQ6sir2I4wzkXxSBy+AEhFkdUIg=";
+            var eventHubName = "reporteventhub";
+
+            await using (var producerClient = new EventHubProducerClient(connectionString, eventHubName))
+            {
+                using var eventBatch = await producerClient.CreateBatchAsync();
+
+                // Convert reportData to JSON and add it to the event batch
+                var eventData = new EventData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(reportData)));
+                eventBatch.TryAdd(eventData);
+
+                // Send the batch of events to the Event Hub
+                await producerClient.SendAsync(eventBatch);
+            }
         }
     }
 }
